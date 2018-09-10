@@ -22,18 +22,20 @@ new Vue({
       }
     },
     onSubmit: function() {
-      this.items = [];
-      this.loading = true;
+      if (this.newSearch.length > 0) {
+        this.items = [];
+        this.loading = true;
 
-      this.$http
-        .get('/search/'.concat(this.newSearch))
-        .then(function(res) {
-          this.lastSearch = this.newSearch;
-          this.results = res.data;
-          this.appendItems();
-          this.loading = false;
-        })
-      ;
+        this.$http
+          .get('/search/'.concat(this.newSearch))
+          .then(function(res) {
+            this.lastSearch = this.newSearch;
+            this.results = res.data;
+            this.appendItems();
+            this.loading = false;
+          })
+        ;
+      }
     },
     addItem: function (index) {
       this.total += PRICE;
@@ -76,6 +78,11 @@ new Vue({
   filters: {
     currency: function(price) {
       return `$${price.toFixed(2)}`;
+    }
+  },
+  computed: {
+    noMoreItems: function() {
+      return (this.items.length === this.results.length && this.results.length > 0);
     }
   },
   mounted: function() {
